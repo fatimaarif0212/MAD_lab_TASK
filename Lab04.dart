@@ -1,4 +1,4 @@
-// lab4.dart   -   Campus Cafe Order System
+// lab3.dart   Campus Cafe Order System
 const String rollNo = '04072313010';
 
 // Seed settings
@@ -26,7 +26,7 @@ class Dish {
 class MenuItem {
   String name;
   
- //Task 2.1 & 2.2: MenuItem Class with constructor logic and this. shorthand//
+  //Task 2.1 & 2.2: MenuItem Class with constructor logic and this. shorthand//
 /* Why could price not be declared final in this version of the class? 
 Answer: Because we reassign/modify 'price' inside the constructor body, 
  and final fields cannot be modified after they are initialized.*/
@@ -49,6 +49,10 @@ Answer:The floor logic didn't run because constructor bodies only execute for th
   MenuItem.fromString(String text)
       : name = text.split(':')[0],
         price = int.parse(text.split(':')[1]);
+
+  // Task 8.1: toString override for nice formatting
+  @override
+  String toString() => '$name (Rs $price)';
 }
 
 // Task 4.1: OrderLog class with a factory constructor for a singleton pattern
@@ -90,9 +94,51 @@ Answer: Because fields in an initializer list are initialized sequentially in or
   /*Why does line.grand = 5 fail? What would you have to add to make it legal?
 Answer: It fails because 'grand' is only a getter (read-only), so it has no setter method. To make it legal, we would need to add a custom setter for 'grand'.*/
 
+// Task 7.1: StudentCard class with private backing field and validating setter
+class StudentCard {
+  final String owner;
+  int _balance;                       
+
+  StudentCard(this.owner) : _balance = 0;
+
+  int get balance => _balance;
+
+  /* The setter silently clamps a bad value. What is one other thing a setter could do with an invalid value?
+  Answer: It could throw an exception or ignore the assignment entirely. */
+  set balance(int v) {
+    if (v < 0) {
+      _balance = 0;
+    } else if (v > balanceCap) {
+      _balance = balanceCap;
+    } else {
+      _balance = v;
+    }
+  }
+}
+
 // Task 5.2: Top-level function returning a main OrderLine
 OrderLine mainOrder() {
   return OrderLine(MenuItem(menu[u], priceOf(u)), 2 + (t + u) % 5);
+}
+
+// Task 8.2: Top-level buildMenu function using collection-for
+List<MenuItem> buildMenu() {
+  return [
+    for (int k = 0; k < 4; k++)
+      () {
+        int idx = (u + 3 * k) % 10;
+        return MenuItem.fromString('${menu[idx]}:${priceOf(idx)}');
+      }()
+  ];
+}
+
+// Task 9.1: Top-level buildReceipt function
+List<OrderLine> buildReceipt() {
+  List<MenuItem> items = buildMenu();
+  return [
+    for (int k = 0; k < 3; k++)
+      OrderLine(items[k], 1 + (t + k) % 4)
+  ];
 }
 
 void main() {
@@ -187,7 +233,102 @@ void step6() {
   print('Step 6: label=${line.label}');
 }
 
-void step7() { print('--- Step 7 ---'); }
-void step8() { print('--- Step 8 ---'); }
-void step9() { print('--- Step 9 ---'); }
-void step10(){ print('--- Step 10 ---'); }
+void step7() {
+  // Task 7.2: Create StudentCard and run test assignments with validation
+  StudentCard card = StudentCard('S$seed');
+  
+  card.balance = seed * 10 + 50;
+  print('Step 7: topped up -> ${card.balance}');
+
+  card.balance = -seed - 1;
+  print('Step 7: bad value -> ${card.balance}');
+
+  card.balance = balanceCap - u;
+  print('Step 7: reset -> ${card.balance}');
+
+  card.balance = card.balance - mainOrder().grand;
+  print('Step 7: paid order -> ${card.balance}');
+}
+
+void step8() {
+  // Task 8.3: Call buildMenu, reduce, and fold
+  List<MenuItem> items = buildMenu();
+  MenuItem priciest = items.reduce((a, b) => a.price > b.price ? a : b);
+  int sum = items.fold(0, (acc, item) => acc + item.price);
+
+  print('Step 8: menu = $items');
+  print('Step 8: priciest = ${priciest.name}');
+  print('Step 8: sum = $sum');
+}
+
+void step9() {
+  // Task 9.2: Process receipt lines, log labels, calculate total, and print results
+  List<OrderLine> receipt = buildReceipt();
+  int receiptTotal = 0;
+
+  for (var line in receipt) {
+    print('Step 9: ${line.label} = ${line.grand}');
+    OrderLog().add('receipt: ${line.label}');
+    receiptTotal += line.grand;
+  }
+
+  print('Step 9: receipt total = $receiptTotal');
+  print('Step 9: log size = ${OrderLog().entries.length}');
+}
+// Task 10.1: Coupon Class
+class Coupon {
+  static final Map<String, Coupon> _cache = {};
+  final String code;
+  final int percent;
+  final int minSpend;
+
+  // Main constructor with initializer list and assertion
+  Coupon(this.code, this.percent)
+      : minSpend = percent * 70,
+        assert(percent >= 1 && percent <= 50, 'Percent must be between 1 and 50');
+
+  // Factory constructor 
+  factory Coupon.fromCode(String code) {
+    return _cache.putIfAbsent(code, () => Coupon(code, couponPercent));
+  }
+
+  // Calculate discount based on minSpend threshold
+  int discountOn(int amount) {
+    if (amount >= minSpend) {
+      return amount * percent ~/ 100;
+    }
+    return 0;
+  }
+}
+
+// Task 10
+void step10() {
+  
+  String code = 'CAFE${seed.toString().padLeft(2, '0')}';
+  
+  Coupon c1 = Coupon.fromCode(code);
+  Coupon c2 = Coupon.fromCode(code);
+  
+  List<OrderLine> receiptLines = buildReceipt();
+  int receipt = receiptLines.fold(0, (sum, line) => sum + line.grand);
+  
+  //Compute discount and print outputs
+  int discount = c1.discountOn(receipt);
+  
+  print('Step 10: ${c1.code} gives ${c1.percent}% off, min spend ${c1.minSpend}');
+  print('Step 10: cached? ${identical(c1, c2)}');
+  print('Step 10: receipt $receipt, discount $discount, payable ${receipt - discount}');
+}
+/*Q1. Animal(this.name, this.type); and the verbose constructor give the same result. What does the shorthand save you? 
+Answer:Instead of declaring parameters and manually writing this.name = name; inside the constructor body, the this. shorthand creates the parameters and assigns them to the fields all in one step.
+
+Q2. When would you choose a named constructor, and when a factory constructor? 
+Answer:Named constructor: Use it when you want different ways to create a brand new instance of a class (for example, Animal.dog(name) vs. Animal.cat(name)).
+Factory constructor: Use it when you do not always want to create a new instance. It lets you return an existing cached instance (like a singleton), return a subclass object, or read data first before deciding what to return.
+
+Q3. What is the difference between assigning a field in a constructor body and assigning it in an initializer list? 
+Answer:An initializer list runs before the object is created, making it the only way to assign final fields, though it cannot access this or read other object properties. The constructor body runs after object creation, allowing complex logic like if statements and this access, but it cannot assign final fields.
+
+Q4. Give one reason to use a getter instead of storing the value in a field, and one reason to use a setter instead of a public field. 
+Answer:To calculate a value on-the-fly without wasting memory saving it (for example, calculating grandTotal = price + tax dynamically every time it is requested).
+To validate or restrict data before saving it (for example, ensuring balance cannot be set to a negative number).*/
