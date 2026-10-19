@@ -71,6 +71,8 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             const Tally(),
+            const SizedBox(height: 12),
+            const BuggyCounter(),
           ],
         ),
       ),
@@ -93,8 +95,6 @@ class StudentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Answer to Think question:
-    // Fields of StatelessWidget must be final because the widget itself is immutable. Removing final causes compilation errors in const constructors.
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -165,9 +165,6 @@ class TallyState extends State<Tally> {
 
   @override
   Widget build(BuildContext context) {
-    // Think Answer:
-    // Hot reload rebuilds widget structures without destroying existing State objects, so _count stays 12.
-    // Hot restart destroys and recreates all State objects, so _count resets back to startCount (3).
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -212,6 +209,8 @@ class BuggyCounterState extends State<BuggyCounter> {
 
   @override
   Widget build(BuildContext context) {
+    // Think Answer:
+    // Before the fix, tapping 3 times updated clicks inside State to 3, but screen showed 0 because rebuild was not triggered.
     return Row(
       children: [
         Text('Bug clicks: $clicks', key: const Key('bug-text')),
@@ -219,7 +218,9 @@ class BuggyCounterState extends State<BuggyCounter> {
         ElevatedButton(
           key: const Key('bug-button'),
           onPressed: () {
-            clicks += bugStep;
+            setState(() {
+              clicks += bugStep;
+            });
           },
           child: Text('+$bugStep'),
         ),
