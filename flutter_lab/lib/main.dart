@@ -32,8 +32,6 @@ class LabApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Answer to Think question:
-    // runApp receives the root widget of the widget tree, while MaterialApp.home receives the default root page/screen of the app.
     return const MaterialApp(
       title: 'Study Tracker',
       home: HomePage(),
@@ -71,6 +69,8 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             const Tally(),
+            const SizedBox(height: 12),
+            const Countdown(),
             const SizedBox(height: 12),
             const BuggyCounter(),
           ],
@@ -197,6 +197,49 @@ class TallyState extends State<Tally> {
   }
 }
 
+// Countdown StatefulWidget definition
+class Countdown extends StatefulWidget {
+  const Countdown({super.key});
+
+  @override
+  State<Countdown> createState() => CountdownState();
+}
+
+class CountdownState extends State<Countdown> {
+  late int _left;
+  late Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _left = startSeconds;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        _left--;
+      });
+      if (_left <= 0) {
+        timer.cancel();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Think Answer:
+    // If _timer.cancel() is omitted in dispose, the timer keeps running in the background and calls setState() on an unmounted State object, throwing "setState() called after dispose()".
+    return Text(
+      _left > 0 ? 'Time left: $_left s' : 'Time is up!',
+      key: const Key('time-left'),
+    );
+  }
+}
+
 class BuggyCounter extends StatefulWidget {
   const BuggyCounter({super.key});
 
@@ -209,8 +252,6 @@ class BuggyCounterState extends State<BuggyCounter> {
 
   @override
   Widget build(BuildContext context) {
-    // Think Answer:
-    // Before the fix, tapping 3 times updated clicks inside State to 3, but screen showed 0 because rebuild was not triggered.
     return Row(
       children: [
         Text('Bug clicks: $clicks', key: const Key('bug-text')),
