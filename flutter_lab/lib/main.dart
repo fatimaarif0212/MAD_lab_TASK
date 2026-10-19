@@ -70,10 +70,7 @@ class HomePage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            GoalBanner(
-              count: startCount,
-              max: maxCount,
-            ),
+            const Tally(),
           ],
         ),
       ),
@@ -127,13 +124,52 @@ class GoalBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Think Answer:
-    // GoalBanner does not need setState because it is a StatelessWidget. 
-    // To make it show a new count, its parent widget must pass a new count value and rebuild GoalBanner.
     final int percent = count * 100 ~/ max;
     return Text(
       'Progress: $count of $max ($percent%)',
       key: const Key('progress'),
+    );
+  }
+}
+
+// Tally StatefulWidget definition
+class Tally extends StatefulWidget {
+  const Tally({super.key});
+
+  @override
+  State<Tally> createState() => TallyState();
+}
+
+class TallyState extends State<Tally> {
+  int _count = startCount;
+
+  void _plus() {
+    setState(() {
+      _count += stepSize;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Think Answer:
+    // Tally holds the widget configuration (immutable), while TallyState holds the mutable state (_count) and logic.
+    // Flutter separates them so widget objects can be lightweight and recreated frequently without losing state.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Count: $_count', key: const Key('count')),
+        GoalBanner(count: _count, max: maxCount),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            ElevatedButton(
+              key: const Key('plus'),
+              onPressed: _plus,
+              child: Text('+$stepSize'),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
