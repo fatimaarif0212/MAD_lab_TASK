@@ -26,7 +26,7 @@ final List<String> lifecycleLog = <String>[];
 
 void main() => runApp(const LabApp());
 
-// Keep the name LabApp and its const constructor: the checker uses them.
+// Stateless: Top-level root widget that does not hold any mutable state.
 class LabApp extends StatelessWidget {
   const LabApp({super.key});
 
@@ -39,6 +39,7 @@ class LabApp extends StatelessWidget {
   }
 }
 
+// Stateless: Page container that arranges other widgets without internal mutable state.
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -59,14 +60,7 @@ class HomePage extends StatelessWidget {
               course: course,
             ),
             const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Start: $startCount', key: const Key('info-start')),
-                Text('Step: $stepSize', key: const Key('info-step')),
-                Text('Max: $maxCount', key: const Key('info-max')),
-              ],
-            ),
+            const InfoRow(),
             const SizedBox(height: 12),
             const Tally(),
             const SizedBox(height: 12),
@@ -80,7 +74,24 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// StudentCard definition
+// Stateless: Displays static info row values based on configuration.
+class InfoRow extends StatelessWidget {
+  const InfoRow({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text('Start: $startCount', key: const Key('info-start')),
+        Text('Step: $stepSize', key: const Key('info-step')),
+        Text('Max: $maxCount', key: const Key('info-max')),
+      ],
+    );
+  }
+}
+
+// Stateless: Displays student information passed through immutable fields.
 class StudentCard extends StatelessWidget {
   final String name;
   final String roll;
@@ -111,7 +122,7 @@ class StudentCard extends StatelessWidget {
   }
 }
 
-// GoalBanner definition
+// Stateless: Computes and displays progress text dynamically based on passed parameters.
 class GoalBanner extends StatelessWidget {
   final int count;
   final int max;
@@ -132,7 +143,7 @@ class GoalBanner extends StatelessWidget {
   }
 }
 
-// Tally StatefulWidget definition
+// Stateful: Manages mutable tally count state and provides increment/decrement logic.
 class Tally extends StatefulWidget {
   const Tally({super.key});
 
@@ -197,7 +208,7 @@ class TallyState extends State<Tally> {
   }
 }
 
-// Countdown StatefulWidget definition
+// Stateful: Manages active timer lifecycle state and tracks total build count.
 class Countdown extends StatefulWidget {
   const Countdown({super.key});
 
@@ -208,10 +219,12 @@ class Countdown extends StatefulWidget {
 class CountdownState extends State<Countdown> {
   late int _left;
   late Timer _timer;
+  int _builds = 0;
 
   @override
   void initState() {
     super.initState();
+    lifecycleLog.add('initState');
     _left = startSeconds;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
@@ -225,21 +238,31 @@ class CountdownState extends State<Countdown> {
 
   @override
   void dispose() {
+    lifecycleLog.add('dispose');
     _timer.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Think Answer:
-    // If _timer.cancel() is omitted in dispose, the timer keeps running in the background and calls setState() on an unmounted State object, throwing "setState() called after dispose()".
-    return Text(
-      _left > 0 ? 'Time left: $_left s' : 'Time is up!',
-      key: const Key('time-left'),
+    _builds++;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          _left > 0 ? 'Time left: $_left s' : 'Time is up!',
+          key: const Key('time-left'),
+        ),
+        Text(
+          'Builds: $_builds',
+          key: const Key('builds'),
+        ),
+      ],
     );
   }
 }
 
+// Stateful: Maintains tap click state and updates text using setState.
 class BuggyCounter extends StatefulWidget {
   const BuggyCounter({super.key});
 
