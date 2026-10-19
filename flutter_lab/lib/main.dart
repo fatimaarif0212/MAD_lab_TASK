@@ -48,8 +48,41 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Study Tracker: $course'),
       ),
-      body: const Center(
-        child: Text('Hello'),
+      body: StudentCard(
+        name: studentName,
+        roll: rollNo,
+        course: course,
+      ),
+    );
+  }
+}
+
+// StudentCard definition
+class StudentCard extends StatelessWidget {
+  final String name;
+  final String roll;
+  final String course;
+
+  const StudentCard({
+    super.key,
+    required this.name,
+    required this.roll,
+    required this.course,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Name: $name', key: const Key('student-name')),
+            Text('Roll no: $roll', key: const Key('student-roll')),
+            Text('Course: $course', key: const Key('student-course')),
+          ],
+        ),
       ),
     );
   }
