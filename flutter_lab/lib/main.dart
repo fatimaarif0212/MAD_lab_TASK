@@ -32,9 +32,8 @@ class LabApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Think Answer:
-    // runApp receives the root widget of the entire Flutter widget tree, 
-    // whereas MaterialApp.home receives the default root page/screen widget of the app.
+    // Answer to Think question:
+    // runApp receives the root widget of the widget tree, while MaterialApp.home receives the default root page/screen of the app.
     return const MaterialApp(
       title: 'Study Tracker',
       home: HomePage(),
@@ -70,6 +69,11 @@ class HomePage extends StatelessWidget {
                 Text('Max: $maxCount', key: const Key('info-max')),
               ],
             ),
+            const SizedBox(height: 12),
+            GoalBanner(
+              count: startCount,
+              max: maxCount,
+            ),
           ],
         ),
       ),
@@ -92,9 +96,8 @@ class StudentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Think Answer:
-    // Fields of StatelessWidget must be final because the widget object is immutable. 
-    // Removing final causes a compiler error/warning when using const constructors.
+    // Answer to Think question:
+    // Fields of StatelessWidget must be final because the widget itself is immutable. Removing final causes compilation errors in const constructors.
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -107,6 +110,30 @@ class StudentCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// GoalBanner definition
+class GoalBanner extends StatelessWidget {
+  final int count;
+  final int max;
+
+  const GoalBanner({
+    super.key,
+    required this.count,
+    required this.max,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Think Answer:
+    // GoalBanner does not need setState because it is a StatelessWidget. 
+    // To make it show a new count, its parent widget must pass a new count value and rebuild GoalBanner.
+    final int percent = count * 100 ~/ max;
+    return Text(
+      'Progress: $count of $max ($percent%)',
+      key: const Key('progress'),
     );
   }
 }
