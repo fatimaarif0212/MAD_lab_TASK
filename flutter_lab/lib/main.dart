@@ -1,5 +1,6 @@
 // main.dart Study Tracker lab
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 const String studentName = 'Fatima Arif';
@@ -11,8 +12,16 @@ final int $t = seed ~/ 10; // tens digit
 final int $u = seed % 10; // units digit
 
 const List<String> courses = [
-  'Mobile Dev', 'Data Structures', 'Operating Systems', 'Databases',
-  'Networks', 'Software Eng', 'AI', 'Web Engineering', 'Graphics', 'Security',
+  'Mobile Dev',
+  'Data Structures',
+  'Operating Systems',
+  'Databases',
+  'Networks',
+  'Software Eng',
+  'AI',
+  'Web Engineering',
+  'Graphics',
+  'Security',
 ];
 
 final String course = courses[$u];
@@ -32,10 +41,7 @@ class LabApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Study Tracker',
-      home: HomePage(),
-    );
+    return const MaterialApp(title: 'Study Tracker', home: HomePage());
   }
 }
 
@@ -46,19 +52,13 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Study Tracker: $course'),
-      ),
+      appBar: AppBar(title: Text('Study Tracker: $course')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            StudentCard(
-              name: studentName,
-              roll: rollNo,
-              course: course,
-            ),
+            StudentCard(name: studentName, roll: rollNo, course: course),
             const SizedBox(height: 12),
             const InfoRow(),
             const SizedBox(height: 12),
@@ -127,11 +127,7 @@ class GoalBanner extends StatelessWidget {
   final int count;
   final int max;
 
-  const GoalBanner({
-    super.key,
-    required this.count,
-    required this.max,
-  });
+  const GoalBanner({super.key, required this.count, required this.max});
 
   @override
   Widget build(BuildContext context) {
@@ -253,10 +249,7 @@ class CountdownState extends State<Countdown> {
           _left > 0 ? 'Time left: $_left s' : 'Time is up!',
           key: const Key('time-left'),
         ),
-        Text(
-          'Builds: $_builds',
-          key: const Key('builds'),
-        ),
+        Text('Builds: $_builds', key: const Key('builds')),
       ],
     );
   }
