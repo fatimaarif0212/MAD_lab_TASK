@@ -32,6 +32,9 @@ class LabApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Think Answer:
+    // runApp receives the root widget of the entire Flutter widget tree, 
+    // whereas MaterialApp.home receives the default root page/screen widget of the app.
     return const MaterialApp(
       title: 'Study Tracker',
       home: HomePage(),
@@ -48,10 +51,27 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Study Tracker: $course'),
       ),
-      body: StudentCard(
-        name: studentName,
-        roll: rollNo,
-        course: course,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            StudentCard(
+              name: studentName,
+              roll: rollNo,
+              course: course,
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Start: $startCount', key: const Key('info-start')),
+                Text('Step: $stepSize', key: const Key('info-step')),
+                Text('Max: $maxCount', key: const Key('info-max')),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -72,6 +92,9 @@ class StudentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Think Answer:
+    // Fields of StatelessWidget must be final because the widget object is immutable. 
+    // Removing final causes a compiler error/warning when using const constructors.
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
