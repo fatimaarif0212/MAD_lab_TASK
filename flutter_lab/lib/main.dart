@@ -146,14 +146,28 @@ class TallyState extends State<Tally> {
   void _plus() {
     setState(() {
       _count += stepSize;
+      if (_count > maxCount) _count = maxCount;
+    });
+  }
+
+  void _minus() {
+    setState(() {
+      _count -= stepSize;
+      if (_count < 0) _count = 0;
+    });
+  }
+
+  void _reset() {
+    setState(() {
+      _count = startCount;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     // Think Answer:
-    // Tally holds the widget configuration (immutable), while TallyState holds the mutable state (_count) and logic.
-    // Flutter separates them so widget objects can be lightweight and recreated frequently without losing state.
+    // Hot reload rebuilds widget structures without destroying existing State objects, so _count stays 12.
+    // Hot restart destroys and recreates all State objects, so _count resets back to startCount (3).
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -166,6 +180,18 @@ class TallyState extends State<Tally> {
               key: const Key('plus'),
               onPressed: _plus,
               child: Text('+$stepSize'),
+            ),
+            const SizedBox(width: 8),
+            ElevatedButton(
+              key: const Key('minus'),
+              onPressed: _minus,
+              child: Text('-$stepSize'),
+            ),
+            const SizedBox(width: 8),
+            OutlinedButton(
+              key: const Key('reset'),
+              onPressed: _reset,
+              child: const Text('Reset'),
             ),
           ],
         ),
