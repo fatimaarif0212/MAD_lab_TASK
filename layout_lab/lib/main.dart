@@ -1,5 +1,6 @@
 // main.dart - Team Board lab
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 const String studentName = 'Fatima Arif';
@@ -234,14 +235,8 @@ class _ClockState extends State<Clock> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Session: $_seconds s',
-          key: const Key('clock'),
-        ),
-        Text(
-          'Builds: $builds',
-          key: const Key('builds'),
-        ),
+        Text('Session: $_seconds s', key: const Key('clock')),
+        Text('Builds: $builds', key: const Key('builds')),
         Probe(seconds: _seconds), // Step 3 (Task 3.3)
       ],
     );
@@ -266,16 +261,14 @@ class Probe extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Scaffold? scaffold = context.findAncestorWidgetOfExactType<Scaffold>();
+    final Scaffold? scaffold = context
+        .findAncestorWidgetOfExactType<Scaffold>();
     final bool above = scaffold != null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Seen at: $seconds s',
-          key: const Key('probe-seen'),
-        ),
+        Text('Seen at: $seconds s', key: const Key('probe-seen')),
         Text(
           'Widget #${identityHashCode(this)}',
           key: const Key('probe-widget'),
@@ -288,10 +281,7 @@ class Probe extends StatelessWidget {
           'Context belongs to: ${context.widget.runtimeType}',
           key: const Key('probe-context'),
         ),
-        Text(
-          'Scaffold above me: $above',
-          key: const Key('probe-above'),
-        ),
+        Text('Scaffold above me: $above', key: const Key('probe-above')),
       ],
     );
   }
@@ -304,10 +294,7 @@ class Welcome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text(
-        'Welcome, $studentName',
-        key: const Key('welcome'),
-      ),
+      child: Text('Welcome, $studentName', key: const Key('welcome')),
     );
   }
 }
@@ -510,7 +497,10 @@ class FlexBoard extends StatelessWidget {
       children: [
         SizedBox(
           width: fixedW,
-          child: Text('Fixed: ${fixedW.toStringAsFixed(0)}', key: const Key('flex-fixed')),
+          child: Text(
+            'Fixed: ${fixedW.toStringAsFixed(0)}',
+            key: const Key('flex-fixed'),
+          ),
         ),
         Expanded(
           flex: flexA,
@@ -548,15 +538,9 @@ class StyledBox extends StatelessWidget {
       decoration: BoxDecoration(
         color: swatch.shade100,
         borderRadius: BorderRadius.circular(boxRadius),
-        border: Border.all(
-          color: swatch.shade700,
-          width: boxBorder,
-        ),
+        border: Border.all(color: swatch.shade700, width: boxBorder),
       ),
-      child: Text(
-        'Box ($hue)',
-        key: const Key('box-text'),
-      ),
+      child: Text('Box ($hue)', key: const Key('box-text')),
     );
   }
 }
