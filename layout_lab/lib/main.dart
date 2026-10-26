@@ -108,9 +108,17 @@ class HomePage extends StatelessWidget {
           children: [
             const SettingsCard(),
             const SizedBox(height: 12),
+            const Welcome(), // Task 4.1: Welcome widget above Clock
+            const SizedBox(height: 12),
             const Clock(), // Step 1, 2 & 3 Widget
-            // Add each new widget BELOW the previous one, in the order the
-            // steps tell you, with a SizedBox(height: 12) between widgets.
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Tile(tileA),
+                Tile(tileB),
+                Tile(tileC),
+              ],
+            ), // Task 4.3: Temporary Row below Clock
           ],
         ),
       ),
@@ -226,7 +234,7 @@ class _ClockState extends State<Clock> {
           'Builds: $builds',
           key: const Key('builds'),
         ),
-        Probe(seconds: _seconds), // Added for Step 3 (Task 3.3)
+        Probe(seconds: _seconds), // Step 3 (Task 3.3)
       ],
     );
   }
@@ -277,6 +285,50 @@ class Probe extends StatelessWidget {
           key: const Key('probe-above'),
         ),
       ],
+    );
+  }
+}
+
+// ===== Step 4: Composition and the Tile =====
+class Welcome extends StatelessWidget {
+  const Welcome({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        'Welcome, $studentName',
+        key: const Key('welcome'),
+      ),
+    );
+  }
+}
+
+class Tile extends StatefulWidget {
+  final String label;
+  const Tile(this.label, {super.key});
+
+  @override
+  State<Tile> createState() => _TileState();
+}
+
+class _TileState extends State<Tile> {
+  int taps = 0;
+
+  /* 
+    Think Comment (Step 4):
+    You built Tile out of an ElevatedButton without writing extends ElevatedButton. 
+    What is this style called, and why does Flutter prefer it?
+    This style is called Composition (combining small widgets together). 
+    Flutter prefers composition over inheritance because it makes code much more flexible, 
+    reusable, and easier to customize without creating complex class hierarchies.
+  */
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () => setState(() => taps++),
+      child: Text('${widget.label} : $taps'),
     );
   }
 }
