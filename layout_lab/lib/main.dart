@@ -108,7 +108,7 @@ class HomePage extends StatelessWidget {
           children: [
             const SettingsCard(),
             const SizedBox(height: 12),
-            const Clock(), // Step 1 Widget
+            const Clock(), // Step 1 & 2 Widget
             // Add each new widget BELOW the previous one, in the order the
             // steps tell you, with a SizedBox(height: 12) between widgets.
           ],
@@ -164,7 +164,7 @@ class SummaryRow extends StatelessWidget {
   }
 }
 
-// ===== Step 1: The Clock =====
+// ===== Steps 1 & 2: The Clock with Lifecycle Logging =====
 class Clock extends StatefulWidget {
   const Clock({super.key});
 
@@ -175,14 +175,23 @@ class Clock extends StatefulWidget {
 class _ClockState extends State<Clock> {
   late Timer _timer;
   int _seconds = startSec;
+  int builds = 0; // Task 2.2 field
 
   @override
   void initState() {
     super.initState(); // Task 1.2: super.initState() called first
+    lifecycleLog.add('initState'); // Task 2.1: log initState
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() => _seconds += tick);
       if (_seconds >= stopAt) timer.cancel(); // Stop at limit
     });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel(); // Task 2.1: first cancel timer
+    lifecycleLog.add('dispose'); // Task 2.1: log dispose
+    super.dispose(); // Task 2.1: super.dispose() called last
   }
 
   /* 
@@ -192,13 +201,32 @@ class _ClockState extends State<Clock> {
     every time setState() is called, build() runs again and creates a new timer. 
     This would start many timers at the same time, making the clock count much faster 
     and wasting memory.
+
+    Think Comment (Step 2):
+    Why does Builds go up by one per second and not by two?
+    The timer fires once every second, triggering setState() once per second, which causes 
+    build() to execute exactly once.
+    
+    What error would you see if timer.cancel() was missing from dispose()?
+    If the widget leaves the screen without cancelling the timer, calling setState() on a 
+    disposed state object throws a Flutter error: "setState() called after dispose()".
   */
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      'Session: $_seconds s',
-      key: const Key('clock'),
+    builds++; // Task 2.2: increment builds count
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Session: $_seconds s',
+          key: const Key('clock'),
+        ),
+        Text(
+          'Builds: $builds',
+          key: const Key('builds'),
+        ),
+      ],
     );
   }
 }
