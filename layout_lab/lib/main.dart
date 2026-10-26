@@ -2,8 +2,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-const String studentName = 'Fatima Arif'; // Write your name here
-const String rollNo = '04072313010'; // Replace with YOUR actual Roll No (must end in 2 digits)
+const String studentName = 'Fatima Arif';
+const String rollNo = '04072313010'; // Seed generated from last two digits: 10
 
 // ===== Seeded settings (generated from YOUR roll number). Do not edit. =====
 final int seed = int.parse(rollNo.substring(rollNo.length - 2));
@@ -108,6 +108,7 @@ class HomePage extends StatelessWidget {
           children: [
             const SettingsCard(),
             const SizedBox(height: 12),
+            const Clock(), // Step 1 Widget
             // Add each new widget BELOW the previous one, in the order the
             // steps tell you, with a SizedBox(height: 12) between widgets.
           ],
@@ -159,6 +160,45 @@ class SummaryRow extends StatelessWidget {
           key: const Key('sum-c'),
         ),
       ],
+    );
+  }
+}
+
+// ===== Step 1: The Clock =====
+class Clock extends StatefulWidget {
+  const Clock({super.key});
+
+  @override
+  State<Clock> createState() => _ClockState();
+}
+
+class _ClockState extends State<Clock> {
+  late Timer _timer;
+  int _seconds = startSec;
+
+  @override
+  void initState() {
+    super.initState(); // Task 1.2: super.initState() called first
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() => _seconds += tick);
+      if (_seconds >= stopAt) timer.cancel(); // Stop at limit
+    });
+  }
+
+  /* 
+    Think Comment (Step 1):
+    Why do we start the Timer in initState and not inside build?
+    initState runs only once when the widget is created. If we put the Timer inside build(), 
+    every time setState() is called, build() runs again and creates a new timer. 
+    This would start many timers at the same time, making the clock count much faster 
+    and wasting memory.
+  */
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      'Session: $_seconds s',
+      key: const Key('clock'),
     );
   }
 }
