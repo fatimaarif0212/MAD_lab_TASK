@@ -108,17 +108,11 @@ class HomePage extends StatelessWidget {
           children: [
             const SettingsCard(),
             const SizedBox(height: 12),
-            const Welcome(), // Task 4.1: Welcome widget above Clock
+            const Welcome(), // Step 4 Widget
             const SizedBox(height: 12),
             const Clock(), // Step 1, 2 & 3 Widget
             const SizedBox(height: 12),
-            Row(
-              children: [
-                Tile(tileA),
-                Tile(tileB),
-                Tile(tileC),
-              ],
-            ), // Task 4.3: Temporary Row below Clock
+            const SwapBoard(), // Step 5 Widget (replaces temporary Row)
           ],
         ),
       ),
@@ -329,6 +323,48 @@ class _TileState extends State<Tile> {
     return ElevatedButton(
       onPressed: () => setState(() => taps++),
       child: Text('${widget.label} : $taps'),
+    );
+  }
+}
+
+// ===== Step 5: Keys: Swapping Tiles =====
+class SwapBoard extends StatefulWidget {
+  const SwapBoard({super.key});
+
+  @override
+  State<SwapBoard> createState() => _SwapBoardState();
+}
+
+class _SwapBoardState extends State<SwapBoard> {
+  var tiles = <Widget>[
+    Tile(tileA, key: ValueKey(tileA)),
+    Tile(tileB, key: ValueKey(tileB)),
+    Tile(tileC, key: ValueKey(tileC)),
+  ];
+
+  void swap() => setState(() => tiles = tiles.reversed.toList());
+
+  /* 
+    Think Comment (Step 5):
+    Without keys, why did the number stay at the left even though the label moved?
+    Without keys, Flutter matches new widgets to old Elements solely by widget type and position in 
+    the tree. Since all widgets are of type Tile and in the same positions, Flutter keeps the 
+    existing Element and State objects in place (keeping the tap counter on the left) and only 
+    updates the widget's label property.
+  */
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(children: tiles),
+        ElevatedButton(
+          key: const Key('swap'),
+          onPressed: swap,
+          child: const Text('Swap'),
+        ),
+      ],
     );
   }
 }
