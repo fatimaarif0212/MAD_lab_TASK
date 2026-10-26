@@ -110,9 +110,11 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 12),
             const Welcome(), // Step 4 Widget
             const SizedBox(height: 12),
-            const Clock(), // Step 1, 2 & 3 Widget
+            const Clock(), // Steps 1-3 Widget
             const SizedBox(height: 12),
-            const SwapBoard(), // Step 5 Widget (replaces temporary Row)
+            const SwapBoard(), // Step 5 Widget
+            const SizedBox(height: 12),
+            const AxisBoard(), // Step 6 Widget
           ],
         ),
       ),
@@ -363,6 +365,53 @@ class _SwapBoardState extends State<SwapBoard> {
           key: const Key('swap'),
           onPressed: swap,
           child: const Text('Swap'),
+        ),
+      ],
+    );
+  }
+}
+
+// ===== Step 6: MainAxisAlignment and CrossAxisAlignment =====
+class AxisBoard extends StatelessWidget {
+  const AxisBoard({super.key});
+
+  // Helper maps to map strings from seeded settings to enums
+  static const Map<String, MainAxisAlignment> mainMap = {
+    'start': MainAxisAlignment.start,
+    'center': MainAxisAlignment.center,
+    'end': MainAxisAlignment.end,
+    'spaceBetween': MainAxisAlignment.spaceBetween,
+    'spaceAround': MainAxisAlignment.spaceAround,
+    'spaceEvenly': MainAxisAlignment.spaceEvenly,
+  };
+
+  static const Map<String, CrossAxisAlignment> crossMap = {
+    'start': CrossAxisAlignment.start,
+    'center': CrossAxisAlignment.center,
+    'end': CrossAxisAlignment.end,
+  };
+
+  /* 
+    Think Comment (Step 6):
+    In Row, which axis is main and which is cross?
+    In Row, main axis is horizontal (left to right) and cross axis is vertical (top to bottom).
+    In Column, main axis is vertical (top to bottom) and cross axis is horizontal (left to right).
+  */
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      key: const Key('axis-col'),
+      crossAxisAlignment: crossMap[crossName]!,
+      children: [
+        Row(
+          key: const Key('axis-row'),
+          mainAxisAlignment: mainMap[mainName]!,
+          children: const [
+            Text('A', key: Key('axis-a')),
+            Text('B', key: Key('axis-b')),
+            Text('C', key: Key('axis-c')),
+          ],
         ),
       ],
     );
