@@ -123,6 +123,8 @@ class HomePage extends StatelessWidget {
             const FixedSummaryWrap(), // Step 7: Fixed with Wrap
             const SizedBox(height: 12),
             const FlexBoard(), // Step 8 Widget
+            const SizedBox(height: 12),
+            const StyledBox(), // Step 9 Widget
           ],
         ),
       ),
@@ -518,6 +520,41 @@ class FlexBoard extends StatelessWidget {
           child: Text('Flexible flex $flexB', key: const Key('flex-flex')),
         ),
       ],
+    );
+  }
+}
+
+// ===== Step 9: Container and Decoration =====
+class StyledBox extends StatelessWidget {
+  const StyledBox({super.key});
+
+  /* 
+    Think Comment (Step 9):
+    What happens if you supply both color and decoration to a Container?
+    Supplying both color and decoration parameters to Container throws an assertion error 
+    ("Cannot provide both a color and a decoration") because color must be defined inside 
+    BoxDecoration when decoration is present.
+  */
+
+  @override
+  Widget build(BuildContext context) {
+    final swatch = swatches[hue]!;
+    return Container(
+      key: const Key('box-container'),
+      margin: EdgeInsets.all(boxMargin),
+      padding: EdgeInsets.all(boxPad),
+      decoration: BoxDecoration(
+        color: swatch.shade100,
+        borderRadius: BorderRadius.circular(boxRadius),
+        border: Border.all(
+          color: swatch.shade700,
+          width: boxBorder,
+        ),
+      ),
+      child: Text(
+        'Box ($hue)',
+        key: const Key('box-text'),
+      ),
     );
   }
 }
