@@ -121,6 +121,8 @@ class HomePage extends StatelessWidget {
             const FixedSummaryRow(), // Step 7: Fixed with Expanded
             const SizedBox(height: 12),
             const FixedSummaryWrap(), // Step 7: Fixed with Wrap
+            const SizedBox(height: 12),
+            const FlexBoard(), // Step 8 Widget
           ],
         ),
       ),
@@ -481,6 +483,39 @@ class FixedSummaryWrap extends StatelessWidget {
         Text(
           'Part C: break the layout on purpose, then fix it with Expanded or Wrap.',
           key: const Key('sum-c-wrap'),
+        ),
+      ],
+    );
+  }
+}
+
+// ===== Step 8: Flex: Expanded and Flexible =====
+class FlexBoard extends StatelessWidget {
+  const FlexBoard({super.key});
+
+  /* 
+    Think Comment (Step 8):
+    What is the difference between Expanded and Flexible(fit: FlexFit.loose)?
+    Expanded forces its child to fill all the available space assigned by its flex factor (FlexFit.tight).
+    Flexible with FlexFit.loose allows its child to be smaller than the allocated space if its natural content size is smaller.
+  */
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(
+          width: fixedW,
+          child: Text('Fixed: ${fixedW.toStringAsFixed(0)}', key: const Key('flex-fixed')),
+        ),
+        Expanded(
+          flex: flexA,
+          child: Text('Expanded flex $flexA', key: const Key('flex-exp')),
+        ),
+        Flexible(
+          flex: flexB,
+          fit: FlexFit.loose,
+          child: Text('Flexible flex $flexB', key: const Key('flex-flex')),
         ),
       ],
     );
