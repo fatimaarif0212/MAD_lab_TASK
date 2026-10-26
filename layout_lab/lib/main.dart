@@ -115,6 +115,12 @@ class HomePage extends StatelessWidget {
             const SwapBoard(), // Step 5 Widget
             const SizedBox(height: 12),
             const AxisBoard(), // Step 6 Widget
+            const SizedBox(height: 12),
+            const SummaryRow(), // Step 7: Provided unconstrained row (overflows)
+            const SizedBox(height: 12),
+            const FixedSummaryRow(), // Step 7: Fixed with Expanded
+            const SizedBox(height: 12),
+            const FixedSummaryWrap(), // Step 7: Fixed with Wrap
           ],
         ),
       ),
@@ -375,7 +381,6 @@ class _SwapBoardState extends State<SwapBoard> {
 class AxisBoard extends StatelessWidget {
   const AxisBoard({super.key});
 
-  // Helper maps to map strings from seeded settings to enums
   static const Map<String, MainAxisAlignment> mainMap = {
     'start': MainAxisAlignment.start,
     'center': MainAxisAlignment.center,
@@ -412,6 +417,70 @@ class AxisBoard extends StatelessWidget {
             Text('B', key: Key('axis-b')),
             Text('C', key: Key('axis-c')),
           ],
+        ),
+      ],
+    );
+  }
+}
+
+// ===== Step 7: Layout Overflow & Fixing It =====
+class FixedSummaryRow extends StatelessWidget {
+  const FixedSummaryRow({super.key});
+
+  /* 
+    Think Comment (Step 7):
+    Why does SummaryRow throw an overflow error, and how do Expanded and Wrap fix it differently?
+    SummaryRow throws an overflow error because a Row gives its children unconstrained width, causing 
+    long text widgets to extend beyond the screen boundaries.
+    Expanded fixes this by forcing children to fit inside the remaining available row width, wrapping text multiline.
+    Wrap fixes this by moving any child that doesn't fit on the current line down to a new row/line.
+  */
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            'Part A: read the widget tree of the $course board from top to bottom.',
+            key: const Key('sum-a-exp'),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            'Part B: build each box from small widgets and never extend a builtin class.',
+            key: const Key('sum-b-exp'),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            'Part C: break the layout on purpose, then fix it with Expanded or Wrap.',
+            key: const Key('sum-c-exp'),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class FixedSummaryWrap extends StatelessWidget {
+  const FixedSummaryWrap({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      children: [
+        Text(
+          'Part A: read the widget tree of the $course board from top to bottom.',
+          key: const Key('sum-a-wrap'),
+        ),
+        Text(
+          'Part B: build each box from small widgets and never extend a builtin class.',
+          key: const Key('sum-b-wrap'),
+        ),
+        Text(
+          'Part C: break the layout on purpose, then fix it with Expanded or Wrap.',
+          key: const Key('sum-c-wrap'),
         ),
       ],
     );
