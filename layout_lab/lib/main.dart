@@ -108,7 +108,7 @@ class HomePage extends StatelessWidget {
           children: [
             const SettingsCard(),
             const SizedBox(height: 12),
-            const Clock(), // Step 1 & 2 Widget
+            const Clock(), // Step 1, 2 & 3 Widget
             // Add each new widget BELOW the previous one, in the order the
             // steps tell you, with a SizedBox(height: 12) between widgets.
           ],
@@ -225,6 +225,56 @@ class _ClockState extends State<Clock> {
         Text(
           'Builds: $builds',
           key: const Key('builds'),
+        ),
+        Probe(seconds: _seconds), // Added for Step 3 (Task 3.3)
+      ],
+    );
+  }
+}
+
+// ===== Step 3: BuildContext: Widget vs Element =====
+class Probe extends StatelessWidget {
+  final int seconds;
+  const Probe({super.key, required this.seconds});
+
+  /* 
+    Think Comment (Step 3):
+    Which of Widget or Element is "cheap and thrown away" and which keeps State?
+    The Widget is immutable, cheap, and thrown away on every rebuild.
+    The Element is persistent, stays in memory, and manages/holds the State.
+
+    Where is the third one, the RenderObject, and what is its job?
+    The RenderObject sits in the Render Tree beneath the Element tree.
+    Its job is to handle layout (measuring sizes, positioning) and actual painting on screen.
+  */
+
+  @override
+  Widget build(BuildContext context) {
+    final Scaffold? scaffold = context.findAncestorWidgetOfExactType<Scaffold>();
+    final bool above = scaffold != null;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Seen at: $seconds s',
+          key: const Key('probe-seen'),
+        ),
+        Text(
+          'Widget #${identityHashCode(this)}',
+          key: const Key('probe-widget'),
+        ),
+        Text(
+          'Element #${identityHashCode(context)}',
+          key: const Key('probe-element'),
+        ),
+        Text(
+          'Context belongs to: ${context.widget.runtimeType}',
+          key: const Key('probe-context'),
+        ),
+        Text(
+          'Scaffold above me: $above',
+          key: const Key('probe-above'),
         ),
       ],
     );
