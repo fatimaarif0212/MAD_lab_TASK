@@ -125,6 +125,8 @@ class HomePage extends StatelessWidget {
             const FlexBoard(), // Step 8 Widget
             const SizedBox(height: 12),
             const StyledBox(), // Step 9 Widget
+            const SizedBox(height: 12),
+            const StampedBox(), // Step 10 Widget
           ],
         ),
       ),
@@ -555,6 +557,44 @@ class StyledBox extends StatelessWidget {
         'Box ($hue)',
         key: const Key('box-text'),
       ),
+    );
+  }
+}
+
+// ===== Step 10: Stack and Positioned =====
+class StampedBox extends StatelessWidget {
+  const StampedBox({super.key});
+
+  /* 
+    Think Comment (Step 10):
+    How does Stack order its children from back to front?
+    Stack renders its children in declaration order: the first child in the list is at the bottom (back), 
+    and subsequent children are rendered on top of preceding children (front).
+  */
+
+  @override
+  Widget build(BuildContext context) {
+    final swatch = swatches[hue]!;
+    return Stack(
+      key: const Key('stamp-stack'),
+      children: [
+        const StyledBox(),
+        Positioned(
+          top: dotTop,
+          right: dotRight,
+          bottom: dotBottom,
+          left: dotLeft,
+          child: Container(
+            key: const Key('stamp-dot'),
+            width: 12,
+            height: 12,
+            decoration: BoxDecoration(
+              color: swatch.shade700,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
